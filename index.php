@@ -8,11 +8,12 @@
  * 
  */
 
-use Controller\Controller;
+use Http\Route;
 
-require_once 'src/Route.php';
-require_once 'src/View.php';
-require_once 'src/Controller.php';
+require_once 'src/autoload.php';
+//require_once 'src/classes/Route.php';
+//require_once 'src/classes/View.php';
+//require_once 'src/classes/Controller.php';
 
 
 $route = new Route();

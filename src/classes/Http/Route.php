@@ -1,9 +1,9 @@
 <?php
 
+namespace Http;
+
 use View\View;
 use Controller\Controller;
-
-require_once 'Controller.php';
 
 class Route 
 {
