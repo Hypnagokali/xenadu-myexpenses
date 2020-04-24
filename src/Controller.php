@@ -1,15 +1,18 @@
 <?php
 namespace Controller;
 
+require_once 'AbstractController.php';
+
+use Controller\AbstractController;
 use View\View;
 
-class Controller {
+class Controller extends AbstractController {
 
-    public function home() {
-        View::display('index');
+    public static function home() {
+        return View::display('index');
     }
 
-    public function expenses() {
+    public static function expenses() {
        return View::display('expenses');
     }
 

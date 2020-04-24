@@ -16,15 +16,14 @@ require_once 'src/Controller.php';
 
 
 $route = new Route();
-$controller = new Controller();
 
-$route->get('/', 'home');
-$route->get('/expenses', 'expenses');
-$route->get('/expenses/year', 'expenses');
-$route->post('/add/bill', 'add');
-$route->post('/wuff', 'success');
+$route->get('/', 'Controller@home');
+$route->get('/expenses', 'Controller@expenses');
+//$route->get('/expenses/year', 'expenses');
+//$route->post('/add/bill', 'add');
+//$route->post('/wuff', 'success');
 
 $route->submit();
-echo '<pre>';
-print_r($route);
+//echo '<pre>';
+//print_r($route);
 

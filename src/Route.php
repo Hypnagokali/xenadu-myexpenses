@@ -1,6 +1,9 @@
 <?php
 
 use View\View;
+use Controller\Controller;
+
+require_once 'Controller.php';
 
 class Route 
 {
@@ -27,7 +30,7 @@ class Route
             $this->_uriPost []= $uri;
         }
         if ($method != null) {
-            $this->_getControllerMethod []= $method;
+            $this->_postControllerMethod []= $method;
         }
     }
 
@@ -45,7 +48,7 @@ class Route
         echo $uriPostParams = isset($_GET['uri']) ? $_GET['uri'] : '404';
 
         /* loop over POST routes */
-        foreach ($this->_uriPost as $uriVal) {
+        foreach ($this->_uriPost as $key => $uriVal) {
             if (preg_match("#^$uriVal$#", $uriPostParams)) {
                 return View::display('success');
             }
@@ -62,15 +65,21 @@ class Route
         /* ersetze '/' durch ein 404 */
         echo $uriGetParams = isset($_GET['uri']) ? $_GET['uri'] : '/';
         echo "<br>";
-        /* loop over get routes */
-        foreach ($this->_uriGet as $uriVal) {
-            echo 'saved get routes: ' . $uriVal;
-            echo "<br>";
+
+        /* loop over GET routes */
+        foreach ($this->_uriGet as $key => $uriVal) {
+
             if (preg_match("#^$uriVal$#", $uriGetParams)) {
-                echo "<p>match!</p>";
-                return View::display('expenses');
+
+                $controllerFunctionString = $this->_getControllerMethod[$key];
+                $controllerFunctionArr = explode('@', $controllerFunctionString);
+                /* call_user_func benötigt immer den gesamten Klassenaufruf mitsamt namespace */
+                $ns = Controller::getNamespace();
+                call_user_func(array($ns . "\\" . $controllerFunctionArr[0], $controllerFunctionArr[1]));
+                break;
             }
         }
+        return View::err404();
 
     }
 }

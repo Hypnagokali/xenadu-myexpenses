@@ -13,9 +13,9 @@ class View
         self::$template = self::$path . $html . '.html';
         ob_clean();
         ob_start();
-         include self::$template;
-         header('Content-Type: text/html');
-        return ob_end_flush();
+            include self::$template;
+            header('Content-Type: text/html');
+        ob_end_flush();
     }
 
     public static function err404() {
