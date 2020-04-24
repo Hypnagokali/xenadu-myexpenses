@@ -63,14 +63,13 @@ class Route
 
     private function invokeGet() {
         /* ersetze '/' durch ein 404 */
-        echo $uriGetParams = isset($_GET['uri']) ? $_GET['uri'] : '/';
-        echo "<br>";
-
+        $uriGetParams = isset($_GET['uri']) ? $_GET['uri'] : '/';
+        $urlNotFound = true;
         /* loop over GET routes */
         foreach ($this->_uriGet as $key => $uriVal) {
 
             if (preg_match("#^$uriVal$#", $uriGetParams)) {
-
+                $urlNotFound = false;
                 $controllerFunctionString = $this->_getControllerMethod[$key];
                 $controllerFunctionArr = explode('@', $controllerFunctionString);
                 /* call_user_func benötigt immer den gesamten Klassenaufruf mitsamt namespace */
@@ -79,7 +78,8 @@ class Route
                 break;
             }
         }
-        return View::err404();
+        if($urlNotFound)
+            return View::err404();
 
     }
 }
