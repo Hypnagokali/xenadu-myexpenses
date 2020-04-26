@@ -14,6 +14,7 @@ use Http\Route;
     init
 */
 require_once 'src/autoload.php';
+require_once 'src/functions.php';
 session_start();
 
 /*

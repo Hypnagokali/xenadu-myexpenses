@@ -52,7 +52,7 @@ class Controller extends AbstractController {
     static public function loginPost($requestParameters) {
         $userLoggedIn = User::login($requestParameters['name'], $requestParameters['password']);
         if ($userLoggedIn) {
-            Redirect::to('/expenses');
+            Redirect::to('/');
         } else {
             Redirect::to('/');
         }
