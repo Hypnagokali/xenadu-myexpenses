@@ -4,6 +4,7 @@ namespace Controller;
 use Controller\AbstractController;
 use View\View;
 use Auth\User;
+use Http\Redirect;
 
 class Controller extends AbstractController {
 
@@ -26,6 +27,11 @@ class Controller extends AbstractController {
         GET Controller:
     */
 
+    static public function logout() {
+        User::logout();
+        Redirect::to('/');
+    }
+
     static public function loginGet($requestParameters) {
         if(User::id() === null) {
             return View::display('login');
@@ -44,7 +50,12 @@ class Controller extends AbstractController {
         POST Controller:
     */
     static public function loginPost($requestParameters) {
-        echo "Username: " . $requestParameters['name'];
+        $userLoggedIn = User::login($requestParameters['name'], $requestParameters['password']);
+        if ($userLoggedIn) {
+            Redirect::to('/expenses');
+        } else {
+            Redirect::to('/');
+        }
     }
 
 }
