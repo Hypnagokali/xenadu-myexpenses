@@ -8,22 +8,29 @@
  * 
  */
 
-use Controller\Controller;
+use Http\Route;
 
-require_once 'src/Route.php';
-require_once 'src/View.php';
-require_once 'src/Controller.php';
+/*
+    init
+*/
+require_once 'src/autoload.php';
+session_start();
 
+/*
+    add routes
+*/
 
 $route = new Route();
 
 $route->get('/', 'Controller@home');
+$route->get('/login', 'Controller@login');
+$route->post('/login', 'Controller@login');
+$route->get('/logout', 'Controller@logout');
 $route->get('/expenses', 'Controller@expenses');
-//$route->get('/expenses/year', 'expenses');
-//$route->post('/add/bill', 'add');
-//$route->post('/wuff', 'success');
 
+/* 
+ let's go! :)
+*/
 $route->submit();
-//echo '<pre>';
-//print_r($route);
+
 

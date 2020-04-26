@@ -1,9 +1,9 @@
 <?php
 
+namespace Http;
+
 use View\View;
 use Controller\Controller;
-
-require_once 'Controller.php';
 
 class Route 
 {
@@ -45,41 +45,44 @@ class Route
     }
 
     private function invokePost() {
-        echo $uriPostParams = isset($_GET['uri']) ? $_GET['uri'] : '404';
-
+        $uriPostParams = isset($_GET['uri']) ? $_GET['uri'] : '/';
+        $urlNotFound = true;
         /* loop over POST routes */
         foreach ($this->_uriPost as $key => $uriVal) {
             if (preg_match("#^$uriVal$#", $uriPostParams)) {
-                return View::display('success');
+                $urlNotFound = false;
+                $controllerFunctionString = $this->_postControllerMethod[$key];
+                $controllerFunctionArr = explode('@', $controllerFunctionString);
+                /* call_user_func benötigt immer den gesamten Klassenaufruf mitsamt namespace */
+                $ns = Controller::getNamespace();
+                call_user_func(array($ns . "\\" . $controllerFunctionArr[0], $controllerFunctionArr[1]), 'post');
+                break;
             }
         }
-        return View::err404();
-
-        if ($uriPostParams == '404') 
+        if($urlNotFound)
             return View::err404();
-        else
-            echo "was geht ab, sagt der POST";
     }
 
     private function invokeGet() {
         /* ersetze '/' durch ein 404 */
-        echo $uriGetParams = isset($_GET['uri']) ? $_GET['uri'] : '/';
-        echo "<br>";
-
+        $uriGetParams = isset($_GET['uri']) ? $_GET['uri'] : '/';
+        $urlNotFound = true;
         /* loop over GET routes */
         foreach ($this->_uriGet as $key => $uriVal) {
 
             if (preg_match("#^$uriVal$#", $uriGetParams)) {
-
+                $urlNotFound = false;
                 $controllerFunctionString = $this->_getControllerMethod[$key];
                 $controllerFunctionArr = explode('@', $controllerFunctionString);
                 /* call_user_func benötigt immer den gesamten Klassenaufruf mitsamt namespace */
                 $ns = Controller::getNamespace();
-                call_user_func(array($ns . "\\" . $controllerFunctionArr[0], $controllerFunctionArr[1]));
+                //call_user_func('Controller\\' . $controllerFunctionArr[0] .'::' . $controllerFunctionArr[1]);
+                call_user_func(array($ns . "\\" . $controllerFunctionArr[0], $controllerFunctionArr[1]), 'get');
                 break;
             }
         }
-        return View::err404();
+        if($urlNotFound)
+            return View::err404();
 
     }
 }
