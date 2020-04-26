@@ -3,15 +3,48 @@ namespace Controller;
 
 use Controller\AbstractController;
 use View\View;
+use Auth\User;
 
 class Controller extends AbstractController {
 
-    static public function home() {
+    /* 
+        InputRequest Controller mapping request to get or post
+    */
+    static public function home($methodPost = false) {
         return View::display('index');
     }
 
-    static public function expenses() {
-       return View::display('expenses');
+    static public function login($methodPost = 'get') {
+        if ($methodPost === 'post') {
+            self::loginPost($_POST);
+        } else {
+            self::loginGet($_GET);
+        }      
+    }
+
+    /*
+        GET Controller:
+    */
+
+    static public function loginGet($requestParameters) {
+        if(User::id() === null) {
+            return View::display('login');
+        } else {
+            echo "Du bist doch bereits eingeloggt :)";
+        }
+    }
+
+    static public function expenses($methodPost = false) {
+        //$queryString = isset($_GET['muh']) ? $_GET['muh'] : '';
+        //echo "<p>query = $queryString</p>";
+        return View::display('expenses');
+    }
+
+    /* 
+        POST Controller:
+    */
+    static public function loginPost($requestParameters) {
+        echo "Username: " . $requestParameters['name'];
     }
 
 }
