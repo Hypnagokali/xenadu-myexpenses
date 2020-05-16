@@ -7,6 +7,7 @@
  * @author Stefan Simon <stefan.simon@lionysos.com>
  * 
  */
+error_reporting(-1);
 
 use Http\Route;
 
@@ -24,9 +25,16 @@ session_start();
 $route = new Route();
 
 $route->get('/', 'Controller@home');
+
 $route->get('/login', 'Controller@login');
-$route->post('/login', 'Controller@login');
+$route->post('/login', 'Controller@loginPost');
+
 $route->get('/logout', 'Controller@logout');
+
+$route->get('/register', 'UserController@hashMyString');
+$route->post('/register', 'UserController@hashMyStringPost');
+$route->post('/verify', 'UserController@verifyPost');
+
 $route->get('/expenses', 'Controller@expenses');
 
 /* 

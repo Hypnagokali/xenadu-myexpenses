@@ -1,0 +1,3 @@
+<?php
+//$baseUrl = "http://localhost/xenadu/myexpenses";
+$baseUrl = "http://xenadu.de/myexpenses";

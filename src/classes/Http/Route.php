@@ -2,8 +2,8 @@
 
 namespace Http;
 
-use View\View;
-use Controller\Controller;
+    use View\View;
+    use Controller\Controller;
 
 class Route 
 {
@@ -40,49 +40,48 @@ class Route
             break;
             case 'POST' : $this->invokePost();
             break;
-        }
-        
+        } 
     }
 
     private function invokePost() {
-        $uriPostParams = isset($_GET['uri']) ? $_GET['uri'] : '/';
-        $urlNotFound = true;
-        /* loop over POST routes */
-        foreach ($this->_uriPost as $key => $uriVal) {
-            if (preg_match("#^$uriVal$#", $uriPostParams)) {
-                $urlNotFound = false;
-                $controllerFunctionString = $this->_postControllerMethod[$key];
-                $controllerFunctionArr = explode('@', $controllerFunctionString);
-                /* call_user_func benötigt immer den gesamten Klassenaufruf mitsamt namespace */
-                $ns = Controller::getNamespace();
-                call_user_func(array($ns . "\\" . $controllerFunctionArr[0], $controllerFunctionArr[1]), 'post');
-                break;
-            }
-        }
-        if($urlNotFound)
-            return View::err404();
+        $this->invokeRequest('POST');
     }
 
     private function invokeGet() {
-        /* ersetze '/' durch ein 404 */
-        $uriGetParams = isset($_GET['uri']) ? $_GET['uri'] : '/';
-        $urlNotFound = true;
-        /* loop over GET routes */
-        foreach ($this->_uriGet as $key => $uriVal) {
+        $this->invokeRequest('GET');
+    }
 
+    private function invokeRequest($requestMethod){
+        /* 
+        *   Je nach Requestmethode werden hier die entsprechenden Eigenschaften referenziert,
+        *   die in der folgenden foreach Schleife benötigt werden.
+        */
+        if ($requestMethod === 'POST') {
+            $cMethod =& $this->_postControllerMethod;
+            $uri =& $this->_uriPost;
+        } elseif ($requestMethod === 'GET') {
+            $cMethod =& $this->_getControllerMethod;
+            $uri =& $this->_uriGet;
+        }
+
+        $uriGetParams = isset($_GET['uri']) ? $_GET['uri'] : '/';
+
+        $urlNotFound = true;
+        /* loop over GET or POST routes */
+        foreach ($uri as $key => $uriVal) {
             if (preg_match("#^$uriVal$#", $uriGetParams)) {
                 $urlNotFound = false;
-                $controllerFunctionString = $this->_getControllerMethod[$key];
+                $controllerFunctionString = $cMethod[$key];
                 $controllerFunctionArr = explode('@', $controllerFunctionString);
-                /* call_user_func benötigt immer den gesamten Klassenaufruf mitsamt namespace */
-                $ns = Controller::getNamespace();
-                //call_user_func('Controller\\' . $controllerFunctionArr[0] .'::' . $controllerFunctionArr[1]);
-                call_user_func(array($ns . "\\" . $controllerFunctionArr[0], $controllerFunctionArr[1]), 'get');
+
+                $ns = Controller::getNamespace();            
+                $controllerInstance = call_user_func([$ns . '\\' . $controllerFunctionArr[0], 'getInstance']);
+                $controllerMethod = $controllerFunctionArr[1];
+                call_user_func(array($controllerInstance, $controllerMethod));
                 break;
             }
         }
         if($urlNotFound)
             return View::err404();
-
     }
 }
