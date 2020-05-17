@@ -1,69 +1,131 @@
 <?php
 namespace Auth;
 
-class User {
-    static private $_uid = null;
-    static private $_uname = null;
-    static private $_usession = null;
+use DateTime;
+use Db\MySQLConnection;
+use Model\User as UserModel;
 
-    static private $_myName = "StefanJC";
-    static private $_myPass = "imceobitch";
-    static private $_myId = 1;
+class User
+{
 
-    static public function id() {
-        if(self::auth())
-            return self::$_uid;
+    // private static $instance = null;
+
+    private static $uid = null;
+    const USER_COOKIE_NAME = 'myexpenses.user';
+    const USER_CREDENTIALS_EXPIRES = 60 * 60 * 24 * 3;
+
+
+    protected function __construct()
+    {
     }
 
-    static public function name() {
-        if(self::auth())
-            return self::$_uname;
+    // public static function getInstance()
+    // {
+    //     if (self::$instance === null) {
+    //         self::$instance = new User();
+    //     }
+    //     return self::$instance;
+    // }
+
+
+    private static function generateToken()
+    {
+        $length = 20;
+        return bin2hex(random_bytes($length));
     }
 
-    /*
-    static public function session() {
-        return self::$_usession;
-    }*/
+    private static function getUserToken()
+    {
+        if (empty($_SESSION[User::USER_COOKIE_NAME])) {
+            return false;
+        }
+        return $_SESSION[User::USER_COOKIE_NAME];
+    }
 
-    static public function login($name, $password) {
-        if ($name === self::$_myName && $password === self::$_myPass) {
-            self::$_uid = $_SESSION['uid'] = self::$_myId;
-            self::$_uname = $_SESSION['name'] = self::$_myName;
-                       
-            $expires = time() + 60 * 60 * 24 * 3;
-
-            setcookie('uid', User::id(), $expires);
-            setcookie('name', User::name(), $expires);
-
+    private static function isUserSessionSet()
+    {
+        if (!empty($_SESSION['user'])) {
             return true;
         }
         return false;
     }
 
-    static public function logout() {
-        if (isset($_SESSION['uid']) && isset($_COOKIE['uid'])) {
-            unset($_SESSION['uid']);
-            unset($_COOKIE['uid']);
-            setcookie('uid', '', time() - 3000);
-            setcookie('name', '', time() - 3000);
-            session_destroy();
-            setcookie(session_name(), '', time() - 3000, '/');
+    private static function isUserCookieSet()
+    {
+        if (!empty($_COOKIE[User::USER_COOKIE_NAME])) {
+            return true;
         }
-        self::$_uid = self::$_uname = null;
+        return false;
     }
 
-    static public function auth() {
-        if(isset($_SESSION['uid']) && isset($_SESSION['name'])) {
-            self::$_uid = $_SESSION['uid'];
-            self::$_uname = $_SESSION['name'];
-            return true;
-        } else {
-            if (isset($_COOKIE['uid']) && isset ($_COOKIE['name'])) {
-                self::$_uid = $_SESSION['uid'] = $_COOKIE['uid'];
-                self::$_uname = $_SESSION['name'] = $_COOKIE['name'];
-            } else {
-                return false;
-            }
+    private static function setSession(UserModel $user)
+    {
+        $_SESSION['user']['id'] = $user->getId();
+        $_SESSION['user']['nickname'] = $user->getNickName();
+        $_SESSION['user']['email'] = $user->getEmail();
+        $_SESSION['user']['hashedpassword'] = $user->getHashedPassword();
+        $_SESSION['user']['name'] = $user->getName();
+        $_SESSION['user']['surname'] = $user->getSurname();
+    }
+
+    public static function getUser()
+    {
+        if (!empty($_SESSION['user'])) {
+            $user = new UserModel(
+                $_SESSION['user']['id'],
+                $_SESSION['user']['nickname'],
+                $_SESSION['user']['email'],
+                $_SESSION['user']['hashedpassword'],
+                $_SESSION['user']['name'],
+                $_SESSION['user']['surname']
+            );
+            return $user;
         }
     }
+
+    private static function createCredentials(MySQLConnection $conn, UserModel $user)
+    {
+        //set token
+        $uToken = self::generateToken();
+        $_SESSION['uid'] = $uToken;
+        //save token in cookie
+        $expires = time() + User::USER_CREDENTIALS_EXPIRES;
+        $dateTime = new DateTime();
+        $expiresDateTime = $dateTime->setTimestamp($expires);
+        setcookie(User::USER_COOKIE_NAME, $uToken, $expires);
+        //reference token to user-id and write to db
+        $result = $conn->addUserAuthToken($user, $uToken, $expiresDateTime);
+        
+    }
+
+    public static function login($email, $password)
+    {
+        $dbConfig = app('db');
+        $conn = new MySQLConnection($dbConfig);
+        /* get email and password from db */
+        $user = $conn->getUserByEmail($email);
+        $verify = password_verify($password, $user->getHashedPassword());
+        //phpcs:disable
+        if (!$verify) return false;
+        //phpcs:enable
+        if (!self::createCredentials($conn, $user)) {
+            echo "DB Fehler! Konnte Credentials nicht anlegen.";
+        } else {
+            echo "Alle hat funktioniert";
+        }
+        exit();
+        //write token to DB
+    }
+
+    public static function auth()
+    {
+        if (self::isUserSessionSet()) {
+            return true;
+        } elseif (self::isUserCookieSet()) {
+            //get User from Database and set SESSION!
+            return true;
+        } else {
+            return false;
+        }
+    } 
 }

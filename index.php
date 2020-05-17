@@ -8,6 +8,8 @@
  * 
  */
 error_reporting(-1);
+mb_internal_encoding('UTF-8');
+mb_http_output('UTF-8');
 
 use Http\Route;
 
@@ -26,10 +28,15 @@ $route = new Route();
 
 $route->get('/', 'Controller@home');
 
-$route->get('/login', 'Controller@login');
-$route->post('/login', 'Controller@loginPost');
+//$route->get('/login', 'Controller@login');
+//$route->post('/login', 'Controller@loginPost');
+
+$route->get('/newlogin', 'AuthController@login');
+$route->post('/newlogin', 'AuthController@loginPost');
 
 $route->get('/logout', 'Controller@logout');
+
+$route->get('/testdb', 'UserController@testDb');
 
 $route->get('/register', 'UserController@hashMyString');
 $route->post('/register', 'UserController@hashMyStringPost');

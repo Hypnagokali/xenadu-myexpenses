@@ -17,6 +17,7 @@ class View
             include self::$template;
             header('Content-Type: text/html');
         ob_end_flush();
+        //exit();
     }
 
     public static function err404() {
@@ -26,5 +27,6 @@ class View
             include self::$template;
             header("HTTP/1.0 404 Not Found");
         ob_end_flush();
+        //exit();
     }
 }
