@@ -8,51 +8,45 @@ use Http\Redirect;
 
 class Controller extends AbstractController {
 
+    protected static $_instance = null;
+
+    public static function getInstance() {
+        if (self::$_instance === null) {
+            self::$_instance = new Controller();
+        }
+        return self::$_instance;
+    }
     /* 
         InputRequest Controller mapping request to get or post
     */
-    static public function home($methodPost = false) {
+    public function home() {
         return View::display('index');
     }
 
-    static public function login($methodPost = 'get') {
-        if ($methodPost === 'post') {
-            self::loginPost($_POST);
-        } else {
-            self::loginGet($_GET);
-        }      
-    }
-
-    /*
-        GET Controller:
-    */
-
-    static public function logout() {
-        User::logout();
-        Redirect::to('/');
-    }
-
-    static public function loginGet($requestParameters) {
+    public function login() {
         if(User::id() === null) {
             return View::display('login');
         } else {
             echo "Du bist doch bereits eingeloggt :)";
-        }
+        }    
     }
 
-    static public function expenses($methodPost = false) {
-        //$queryString = isset($_GET['muh']) ? $_GET['muh'] : '';
-        //echo "<p>query = $queryString</p>";
+    public function logout() {
+        User::logout();
+        Redirect::to('/');
+    }
+
+    public function expenses() {
         return View::display('expenses');
     }
 
     /* 
         POST Controller:
     */
-    static public function loginPost($requestParameters) {
-        $userLoggedIn = User::login($requestParameters['name'], $requestParameters['password']);
+    public function loginPost() {
+        $userLoggedIn = User::login($_POST['name'], $_POST['password']);
         if ($userLoggedIn) {
-            Redirect::to('/expenses');
+            Redirect::to('/');
         } else {
             Redirect::to('/');
         }

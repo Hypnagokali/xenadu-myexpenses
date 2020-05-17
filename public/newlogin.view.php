@@ -1,4 +1,6 @@
-<?php use Auth\User; ?>
+<?php 
+use Auth\User;
+?>
 <!-- get_header() -->
 <!DOCTYPE html>
 <html lang="de">
@@ -30,30 +32,42 @@
     <!-- CONTENT -->
     <div id="page-content" class="content">
         <div class="content-container">
-            <?php if(User::auth()) : ?>
+            <?php if (User::auth()) : ?>
             <!-- 
                 User is logged in -> USERs PROFILE
              --> 
             <div id="user-container" class="user-container">
-                <h2><?php echo User::name();?>s Profil</h2>
+                <h2><?php echo User::name();?> ist bereits eingeloggt o.Ô</h2>
                 <hr>
-            </div>
-
-            <div class="user-content">
-                <div class="user-content-container">
-                    <h3>Ausgaben in diesem Monat</h3>
-                </div>
-                <div class="user-content-container">
-                    <h3>Noch über für den rest des Monats</h3>
-                </div>
             </div>
             
 
-            <?php else: ?>
+            <?php else : ?>
             <!-- 
                 Not logged in!
              --> 
-            <h3>Nicht eingeloggt: <a style="color: #ffa604" href="<?php echo baseUrl();?>/login">hier entlang und einloggen</a></h3>
+            <h2>Login</h2>
+                <?php
+                if (isset($_SESSION['flash']['login'])) :
+                    ?>
+                <div class="flash-error-msg">
+                        <?php
+                        echo $_SESSION['flash']['login'];
+                        unset($_SESSION['flash']['login']);
+                        ?>
+                </div>
+                    <?php
+                endif;
+                ?>
+            <div>
+                <form action ="newlogin" method="POST">
+                    <label for="email">E-Mail:</label>
+                    <input type="text" name="email" id="email" placeholder="E-Mail" />
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" />
+                    <input type="submit" value="Login" />
+                </form>
+            </div>
             <?php endif;?>
         </div>
     </div> <!-- page-content -->
