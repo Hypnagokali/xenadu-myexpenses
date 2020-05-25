@@ -1,4 +1,14 @@
-<?php use Auth\User; ?>
+<?php
+use Auth\User;
+use Model\User as UserModel;
+?>
+
+<?php
+$user = null;
+if (User::auth()) {
+    $user = User::getUser();
+}
+?>
 <!-- get_header() -->
 <!DOCTYPE html>
 <html lang="de">
@@ -30,12 +40,12 @@
     <!-- CONTENT -->
     <div id="page-content" class="content">
         <div class="content-container">
-            <?php if(User::auth()) : ?>
+            <?php if (User::auth()) : ?>
             <!-- 
                 User is logged in -> USERs PROFILE
              --> 
             <div id="user-container" class="user-container">
-                <h2><?php echo User::name();?>s Profil</h2>
+                <h2>Das Profil von dir! <?php echo $user->getName() . ' ' . $user->getSurname();?></h2>
                 <hr>
             </div>
 
@@ -49,7 +59,7 @@
             </div>
             
 
-            <?php else: ?>
+            <?php else : ?>
             <!-- 
                 Not logged in!
              --> 

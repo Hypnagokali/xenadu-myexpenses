@@ -1,7 +1,7 @@
 <?php
 namespace Controller;
 
-use Auth\User;
+use Auth\Auth;
 use Http\Redirect;
 use View\View;
 
@@ -25,6 +25,12 @@ class AuthController extends AbstractController {
         View::display('newlogin');
     }
 
+    public function logout()
+    {
+        Auth::logout();
+        Redirect::to('/newlogin');
+    }
+
     public function loginPost()
     {
         $email = isset($_POST['email']) ? $_POST['email'] : null;
@@ -43,7 +49,7 @@ class AuthController extends AbstractController {
         
         //phpcs:enable
         /* Try to login user */
-        if (User::login($email, $password)) {
+        if (Auth::login($email, $password)) {
             Redirect::to('/');
         } else {
             $_SESSION['flash']['login'] = 'Falsche E-Mail oder falsches Passwort!';

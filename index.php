@@ -36,6 +36,7 @@ $route->post('/newlogin', 'AuthController@loginPost');
 
 $route->get('/logout', 'Controller@logout');
 
+$route->get('/mappertest', 'MyExpensesController@testMapper');
 $route->get('/testdb', 'UserController@testDb');
 
 $route->get('/register', 'UserController@hashMyString');
