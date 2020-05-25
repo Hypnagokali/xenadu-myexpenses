@@ -36,7 +36,7 @@
              --> 
             <div id="user-container" class="user-container">
             <h1>MyExpenses</h1>
-                <?php echo "<p>User ID: " . $_SESSION['uid'] . "</p>"; ?>
+                <?php echo "<p>User ID: " . $_SESSION['user']['id'] . "</p>"; ?>
                 <form method="POST" action="wuff">
                     <input type="number" name="costs" value="10"/>
                     <input type="submit" name="submit">
@@ -44,7 +44,7 @@
             </div>
             
 
-            <?php else: ?>
+            <?php else : ?>
             <!-- 
                 Not logged in!
              --> 

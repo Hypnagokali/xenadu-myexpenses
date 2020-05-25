@@ -7,7 +7,7 @@ namespace Model;
  * User who is a friend of the authenticated user
  * and then there are Users
  */
-class User
+class User implements ModelInterface
 {
 
     private $user_id = -1;

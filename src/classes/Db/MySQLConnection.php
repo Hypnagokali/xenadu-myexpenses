@@ -1,6 +1,7 @@
 <?php
 namespace Db;
 
+use Auth\AuthToken;
 use DateTime;
 use PDO;
 use PDOException;
@@ -34,6 +35,41 @@ class MySQLConnection
         }
     }
 
+    public function fetchFirst(string $sql, array $data)
+    {
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->execute($data);
+        $result = $stmt->fetch();
+        return $result;
+    }
+    public function fetchAll(string $sql, array $data)
+    {
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->execute($data);
+        $result = $stmt->fetchAll();
+        return $result;
+    }
+
+    public function query(string $sql, array $values)
+    {
+        try {
+            $this->dbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $this->dbConnection->prepare($sql);
+            $result = $stmt->execute($values);
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+        
+        return $result;
+    }
+
+    public function getLastInsertedId()
+    {
+        return $this->dbConnection->lastInsertId();
+    }
+
+
+
     public function getAllExpensesFromUser($uid = -1)
     {
         $stmt = $this->dbConnection->prepare('SELECT * FROM expenses WHERE user_id = ?');
@@ -42,12 +78,9 @@ class MySQLConnection
         return $result;
     }
 
-    public function getUserByEmail($email)
-    {
-        $stmt = $this->dbConnection->prepare('SELECT * FROM users WHERE email = ?');
-        $stmt->execute([$email]);
-        $result = $stmt->fetch();
 
+    private function createUser($result)
+    {
         $user = new User(
             $result['id'],
             $result['nickname'],
@@ -56,10 +89,29 @@ class MySQLConnection
             $result['name'],
             $result['surname']
         );
+        return $user;
+    }
+
+    public function getUserByEmail($email)
+    {
+        $stmt = $this->dbConnection->prepare('SELECT * FROM users WHERE email = ?');
+        $stmt->execute([$email]);
+        $result = $stmt->fetch();
+
+        $user = $this->createUser($result);
 
         return $user;
     }
     
+    public function getUserById($id)
+    {
+        $sqlString = 'SELECT * FROM users WHERE id = ?';
+        $stmt = $this->dbConnection->prepare($sqlString);
+        $stmt->execute([$id]);
+        $result = $stmt->fetch();
+        return $this->createUser($result);
+    }
+
     /**
      * addUserAuthToken
      *
@@ -77,12 +129,45 @@ class MySQLConnection
         return $resultBool;
     }
 
-    public function getUserByToken($token)
+    public function updateAuthToken(AuthToken $token)
+    {
+        $sqlString = 'UPDATE auth_tokens SET expires = ? WHERE id = ?';
+        $stmt = $this->dbConnection->prepare($sqlString);
+        $stmt->execute([
+            $token->expires,
+            $token->id
+        ]);
+    }
+
+    public function getAuthToken(string $token)
+    {
+        $sqlString = 'SELECT * FROM auth_tokens WHERE token = ?';
+        $stmt = $this->dbConnection->prepare($sqlString);
+        $stmt->execute([$token]);
+        
+        if (!$stmt->rowCount() > 0) {
+            return false;
+        }
+
+        $result = $stmt->fetch();
+        $authToken = new AuthToken(
+            $result['id'],
+            $result['user_id'],
+            $result['token'],
+            $result['expires']
+        );
+        return $authToken;
+    }
+
+    public function getUserByToken(string $token)
     {
         $sqlString = 'SELECT * FROM auth_tokens WHERE token = ?';
         $stmt = $this->dbConnection->prepare($sqlString);
         $stmt->execute([$token]);
         $result = $stmt->fetch();
+        $uid = $result['user_id'];
+        $user = $this->getUserById($uid);
+        return $user;
     }
 
     public function deleteAuthToken(User $user)

@@ -37,7 +37,7 @@ use Auth\User;
                 User is logged in -> USERs PROFILE
              --> 
             <div id="user-container" class="user-container">
-                <h2><?php echo User::name();?> ist bereits eingeloggt o.Ô</h2>
+                <h2>User ist bereits eingeloggt o.Ô</h2>
                 <hr>
             </div>
             
