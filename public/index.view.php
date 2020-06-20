@@ -1,12 +1,12 @@
 <?php
-use Auth\User;
-use Model\User as UserModel;
+use Auth\Auth;
+use Model\User;
 ?>
 
 <?php
 $user = null;
-if (User::auth()) {
-    $user = User::getUser();
+if (Auth::auth()) {
+    $user = Auth::getUser();
 }
 ?>
 <!-- get_header() -->
@@ -27,7 +27,7 @@ if (User::auth()) {
                 <ul>
                     <li><a href="<?php echo baseUrl(); ?>">Home</a></li>
                     <li><a href="<?php echo baseUrl(); ?>/expenses">Ausgaben</a></li>
-                    <?php if (User::auth()) : ?>
+                    <?php if (Auth::auth()) : ?>
                         <li><a href="<?php echo baseUrl(); ?>/logout">Logout</a></li>
                     <?php else : ?>
                         <li><a href="<?php echo baseUrl(); ?>/login">Login</a></li>
@@ -40,7 +40,7 @@ if (User::auth()) {
     <!-- CONTENT -->
     <div id="page-content" class="content">
         <div class="content-container">
-            <?php if (User::auth()) : ?>
+            <?php if (Auth::auth()) : ?>
             <!-- 
                 User is logged in -> USERs PROFILE
              --> 

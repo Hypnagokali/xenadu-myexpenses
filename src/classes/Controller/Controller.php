@@ -3,14 +3,16 @@ namespace Controller;
 
 use Controller\AbstractController;
 use View\View;
-use Auth\User;
+use Auth\Auth;
 use Http\Redirect;
 
-class Controller extends AbstractController {
+class Controller extends AbstractController
+{
 
     protected static $_instance = null;
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$_instance === null) {
             self::$_instance = new Controller();
         }
@@ -19,24 +21,28 @@ class Controller extends AbstractController {
     /* 
         InputRequest Controller mapping request to get or post
     */
-    public function home() {
+    public function home()
+    {
         return View::display('index');
     }
 
-    public function login() {
-        if(User::id() === null) {
+    public function login()
+    {
+        if (!Auth::auth()) {
             return View::display('login');
         } else {
-            echo "Du bist doch bereits eingeloggt :)";
-        }    
+            return View::display('index');
+        }
     }
 
-    public function logout() {
-        User::logout();
+    public function logout()
+    {
+        Auth::logout();
         Redirect::to('/');
     }
 
-    public function expenses() {
+    public function expenses()
+    {
         return View::display('expenses');
     }
 
@@ -44,12 +50,11 @@ class Controller extends AbstractController {
         POST Controller:
     */
     public function loginPost() {
-        $userLoggedIn = User::login($_POST['name'], $_POST['password']);
+        $userLoggedIn = Auth::login($_POST['name'], $_POST['password']);
         if ($userLoggedIn) {
             Redirect::to('/');
         } else {
             Redirect::to('/');
         }
     }
-
 }

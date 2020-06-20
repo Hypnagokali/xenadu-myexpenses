@@ -16,6 +16,13 @@ class ExpensesMapper extends AbstractDataMapper
 
     protected function populate(ModelInterface $object, array $data)
     {
+        // Ich mache es so, weil keine Konvertierung ModelInterface -> Expenses möglich
+        // Vielleicht finde ich eine andere Lösung
+        $this->populateExpenses($object, $data);
+    }
+
+    private function populateExpenses(Expenses $object, array $data)
+    {
         if (isset($data['id'])) {
             $object->setId($data['id']);
         }
@@ -37,6 +44,7 @@ class ExpensesMapper extends AbstractDataMapper
             $object->setOccuredAt($data['occured_at']);
         }
         return $object;
+
     }
 
     protected function createInstance()
@@ -68,6 +76,13 @@ class ExpensesMapper extends AbstractDataMapper
 
     protected function insertIntoDb(ModelInterface $object)
     {
+        // Ich mache es so, weil keine Konvertierung ModelInterface -> Expenses möglich
+        // Vielleicht finde ich eine andere Lösung
+        $this->insertExpenses($object);
+    }
+
+    private function insertExpenses(Expenses $object)
+    {
         $query = "INSERT INTO expenses (user_id, sum, type_id, location, occurred_at) VALUES (?, ?, ?, ?, ?)";
         $values = [
             $object->getUserId(),
@@ -81,6 +96,11 @@ class ExpensesMapper extends AbstractDataMapper
     }
     
     protected function updateDb(ModelInterface $object)
+    {
+        $this->updateExpenses($object);
+    }
+
+    private function updateExpenses(Expenses $object)
     {
         $query = "UPDATE expenses SET (user_id, sum, type_id, location, occurred_at) VALUES (?, ?, ?, ?, ?)";
         $values = [
