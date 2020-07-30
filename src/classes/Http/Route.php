@@ -35,11 +35,14 @@ class Route
     }
 
     public function submit() {
-        switch($_SERVER['REQUEST_METHOD']) {
-            case 'GET' : $this->invokeGet();
-            break;
-            case 'POST' : $this->invokePost();
-            break;
+        switch ($_SERVER['REQUEST_METHOD']) {
+            case 'GET':
+                $this->invokeGet();
+                break;
+
+            case 'POST':
+                $this->invokePost();
+                break;
         } 
     }
 

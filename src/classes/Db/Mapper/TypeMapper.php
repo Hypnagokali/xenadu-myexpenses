@@ -31,10 +31,20 @@ class TypeMapper extends AbstractDataMapper
     {
         $data = $this->dbh->fetchFirst('SELECT * FROM types WHERE id= ? LIMIT 1', [$id]);
         $type = null;
-        if ($data !== null) {
+        if ($data !== false) {
             $type = $this->create($data);
         }
         return $type;
+    }
+
+    public function findAll()
+    {
+        $dataArray = $this->dbh->fetchAll('SELECT * FROM types', []);
+        $typeList = [];
+        foreach ($dataArray as $data) {
+            $typeList []= $this->create($data);
+        }
+        return $typeList;
     }
 
     public function findByName($name)

@@ -18,6 +18,13 @@ a {
 
 h2, h3, h4 {
     font-weight: lighter;
+    margin-top: 2%;
+}
+
+.sub-header {
+    font-weight: lighter;
+    font-size: 0.7em;
+    margin-left: 5%;
 }
 
 .page {}
@@ -37,6 +44,10 @@ h2, h3, h4 {
 .sub {
     font-size: smaller;
     font-weight: lighter;
+}
+
+.success {
+    color: #b3da85;
 }
 
 .nav {
@@ -78,19 +89,8 @@ h2, h3, h4 {
 
 .content-container {
     margin: 0 auto;
-    width: 80%;
-    padding: 50px;
-}
-
-.user-container {
-    padding: 5% 2%;
-}
-
-.user-content {
-    padding: 25px;
-}
-.user-content-container {
-    margin: 20px;
+    width: 60vw;
+    padding-top: 5%;
 }
 
 .footer {
@@ -105,10 +105,74 @@ h2, h3, h4 {
     font-weight: 400;
 }
 
+.input-expenses-container {
+    font-family: 'Nanum Gothic', sans-serif;
+}
+
+.input-fields {
+    margin: 10px;
+    margin-top: 20px;
+}
+
+.input-fields input, .input-fields select {
+    width: 50vw;
+    border: none;
+    height: 30px;
+    padding: 5px 5px;
+    padding-left: 10px;
+    border-radius: 8px;
+}
+
+.input-fields label {
+    display: block;
+    margin: 15px 5px 5px 25px;
+}
+
+.input-fields button {
+    width: 50vw;
+    height: 40px;
+    border: none;
+    box-shadow: 6px 6px 10px 1px #38323a;
+    border-radius: 15px;
+    background-color: bisque;
+}
+
+.expenses-table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 5%;
+  }
+  
+  .expenses-table td, .expenses-table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+   
+  .expenses-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #512E5F;
+    color: white;
+  }
+
 .footer-title {
 
 }
 
 .footer-content {
 
+}
+
+@media (min-width: 600px) {
+    .input-fields input, .input-fields select {
+        width: 300px;
+    }.input-fields button {
+        width: 300px;
+    }
+    .input-expenses-container {
+        width: 600px;
+        /* padding-left: 15%; */
+    }
 }

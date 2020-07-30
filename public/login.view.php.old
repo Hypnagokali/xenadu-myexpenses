@@ -1,6 +1,4 @@
-<?php 
-use Auth\User;
-?>
+<?php use Auth\User; ?>
 <!-- get_header() -->
 <!DOCTYPE html>
 <html lang="de">
@@ -32,38 +30,26 @@ use Auth\User;
     <!-- CONTENT -->
     <div id="page-content" class="content">
         <div class="content-container">
-            <?php if (User::auth()) : ?>
+            <?php if(User::auth()) : ?>
             <!-- 
                 User is logged in -> USERs PROFILE
              --> 
             <div id="user-container" class="user-container">
-                <h2>User ist bereits eingeloggt o.Ô</h2>
+                <h2><?php echo User::name();?> ist bereits eingeloggt o.Ô</h2>
                 <hr>
             </div>
             
 
-            <?php else : ?>
+            <?php else: ?>
             <!-- 
                 Not logged in!
              --> 
-            <h2>Login</h2>
-                <?php
-                if (isset($_SESSION['flash']['login'])) :
-                    ?>
-                <div class="flash-error-msg">
-                        <?php
-                        echo $_SESSION['flash']['login'];
-                        unset($_SESSION['flash']['login']);
-                        ?>
-                </div>
-                    <?php
-                endif;
-                ?>
+             <h2>Login</h2>
             <div>
-                <form action ="newlogin" method="POST">
-                    <label for="email">E-Mail:</label>
-                    <input type="text" name="email" id="email" placeholder="E-Mail" />
-                    <label for="password">Password:</label>
+                <form action ="login" method="POST">
+                    <label for="name">Name:</label>
+                    <input type="text" name="name" id="name" placeholder="Username" />
+                    <label for="password">Name:</label>
                     <input type="password" name="password" id="password" />
                     <input type="submit" value="Login" />
                 </form>

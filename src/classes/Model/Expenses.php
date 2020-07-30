@@ -43,7 +43,7 @@ class Expenses implements ModelInterface
         return $this->location;
     }
 
-    public function getOccuredAt()
+    public function getOccurredAt()
     {
         return $this->occured_at;
     }
@@ -73,7 +73,7 @@ class Expenses implements ModelInterface
         $this->location = $location;
     }
 
-    public function setOccuredAt($occured_at)
+    public function setOccurredAt($occured_at)
     {
         $this->occured_at = $occured_at;
     }

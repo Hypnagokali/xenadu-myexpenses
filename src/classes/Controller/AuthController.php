@@ -5,7 +5,8 @@ use Auth\Auth;
 use Http\Redirect;
 use View\View;
 
-class AuthController extends AbstractController {
+class AuthController extends AbstractController
+{
 
     private static $instance = null;
 
@@ -22,13 +23,13 @@ class AuthController extends AbstractController {
 
     public function login()
     {
-        View::display('newlogin');
+        View::display('login');
     }
 
     public function logout()
     {
         Auth::logout();
-        Redirect::to('/newlogin');
+        Redirect::to('/login');
     }
 
     public function loginPost()
@@ -39,12 +40,12 @@ class AuthController extends AbstractController {
         //phpcs:disable
         if (empty($email) || empty($password)) {
             $_SESSION['flash']['login'] = 'E-Mail und Passwortfeld dürfen nicht leer sein!';
-            Redirect::to('/newlogin');
+            Redirect::to('/login');
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $_SESSION['flash']['login'] = 'Bitte eine gültige E-Mail Adresse angeben!';
-            Redirect::to('/newlogin');
+            Redirect::to('/login');
         }
         
         //phpcs:enable
@@ -53,7 +54,7 @@ class AuthController extends AbstractController {
             Redirect::to('/');
         } else {
             $_SESSION['flash']['login'] = 'Falsche E-Mail oder falsches Passwort!';
-            Redirect::to('/newlogin');
+            Redirect::to('/login');
         };
     }
 }

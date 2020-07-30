@@ -152,7 +152,9 @@ class Auth
         $dbConfig = app('db');
         $conn = new MySQLConnection($dbConfig);
         $user = self::getUser();
-        $conn->deleteAuthToken($user);
+        if ($user) {
+            $conn->deleteAuthToken($user);
+        }
         self::destroyAll();
     }
 }
