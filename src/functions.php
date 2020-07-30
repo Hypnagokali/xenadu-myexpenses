@@ -24,6 +24,6 @@ function app($config_var = '') {
             return dbConnection();
         break;
         default:
-        return false;
+            return false;
     }
 }

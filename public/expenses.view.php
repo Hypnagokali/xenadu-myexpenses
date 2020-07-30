@@ -1,35 +1,8 @@
 <?php 
+    include 'header.php';
     use Auth\Auth;
     use Db\Mapper\TypeMapper;
 ?>
-<!-- get_header() -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo baseUrl(); ?>/public/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
-    <title>Xenadu - MyExpenses</title>
-</head>
-<body>
-    <div id="page-header" class="page">
-        <div class="header">
-            <h1>xenadu.de <span class="sub"> | MyExpenses</span></h1>
-            <nav class="nav">
-                <ul>
-                    <li><a href="<?php echo baseUrl(); ?>">Home</a></li>
-                    <li><a href="<?php echo baseUrl(); ?>/expenses">Ausgaben</a></li>
-                    <?php if (Auth::auth()) : ?>
-                        <li><a href="<?php echo baseUrl(); ?>/logout">Logout</a></li>
-                    <?php else : ?>
-                        <li><a href="<?php echo baseUrl(); ?>/newlogin">Login</a></li>
-                    <?php endif;?>
-                </ul>
-            </nav>
-        </div>
-    </div> <!-- page-header -->
-
     <!-- CONTENT -->
     <div id="page-content" class="content">
         <div class="content-container">
@@ -45,7 +18,15 @@
             <h1>MyExpenses</h1>
 
             <div class="input-expenses-container">
-                <form method="POST" action="<?php echo baseUrl()?>/expenses/add">
+                    <?php
+                    if (isset($_SESSION['flash']['success'])) :
+                        ?>
+                        <h3 class="success"><?php echo $_SESSION['flash']['success']?></h3>
+                        <?php
+                        unset($_SESSION['flash']['success']);
+                    endif;
+                    ?>
+                <form autocomplete="off" method="POST" action="<?php echo baseUrl()?>/expenses/add">
                     <!-- Eingabe: Summe -->
                     <div class="input-fields">
                         <?php if (isset($_SESSION['flash']['sum'])) : ?>
@@ -133,10 +114,4 @@
     </div> <!-- page-content -->
     <!-- END CONTENT -->
 
-    <!-- get_footer() -->
-    <div id="page-footer" class="footer">
-    <div class="footer-title"><a href="http://www.xenadu.de">xenadu.de</a></div>
-    <div class="footer-content"><a href="https://github.com/Hypnagokali/xenadu-myexpenses">Visit on GitHub</a></div>
-    </div> <!-- page-footer -->
-</body>
-</html>
+<?php include 'footer.php'; ?>

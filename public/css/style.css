@@ -18,6 +18,13 @@ a {
 
 h2, h3, h4 {
     font-weight: lighter;
+    margin-top: 2%;
+}
+
+.sub-header {
+    font-weight: lighter;
+    font-size: 0.7em;
+    margin-left: 5%;
 }
 
 .page {}
@@ -37,6 +44,10 @@ h2, h3, h4 {
 .sub {
     font-size: smaller;
     font-weight: lighter;
+}
+
+.success {
+    color: #b3da85;
 }
 
 .nav {
@@ -125,6 +136,26 @@ h2, h3, h4 {
     border-radius: 15px;
     background-color: bisque;
 }
+
+.expenses-table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 5%;
+  }
+  
+  .expenses-table td, .expenses-table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+   
+  .expenses-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #512E5F;
+    color: white;
+  }
 
 .footer-title {
 

@@ -6,6 +6,8 @@ use Model\ModelInterface;
 use Model\Expenses;
 use Db\Mapper\TypeMapper;
 use Db\MySQLConnection;
+use DateTime;
+use DateTimeImmutable;
 
 class ExpensesMapper extends AbstractDataMapper
 {
@@ -40,8 +42,8 @@ class ExpensesMapper extends AbstractDataMapper
             $type = $typeMapper->findById($data['type_id']);
             $object->setType($type);
         }
-        if (isset($data['occured_at'])) {
-            $object->setOccuredAt($data['occured_at']);
+        if (isset($data['occurred_at'])) {
+            $object->setOccurredAt($data['occurred_at']);
         }
         return $object;
 
@@ -62,7 +64,7 @@ class ExpensesMapper extends AbstractDataMapper
         return $expenses;
     }
 
-    public function findAllByUserId($user_id) : array
+    public function findAllByUserId(int $user_id) : array
     {
         $expensesObjects = [];
         $usersExpenses = $this->dbh->fetchAll('SELECT * FROM expenses WHERE user_id = ?', [$user_id]);
@@ -72,6 +74,32 @@ class ExpensesMapper extends AbstractDataMapper
             }
         }
         return $expensesObjects;
+    }
+
+    public function findAllByDateIntervall(DateTimeImmutable $start, DateTimeImmutable $end, int $user_id) : array
+    {
+        $startString = $start->format('Y-m-d H:i:s');
+        $endString = $end->format('Y-m-d H:i:s');
+        $data = [
+            $endString,
+            $startString,
+            $user_id
+        ];
+        $expensesList = [];
+        $expensesData = $this->dbh->fetchAll(
+            "SELECT * FROM expenses
+                WHERE occurred_at < ?
+                AND occurred_at >= ?
+                AND user_id = ?
+                ORDER BY
+                occurred_at
+                DESC",
+            $data
+        );
+        foreach ($expensesData as $expenses) {
+            $expensesList []= $this->create($expenses);
+        }
+        return $expensesList;
     }
 
     protected function insertIntoDb(ModelInterface $object)
@@ -89,7 +117,7 @@ class ExpensesMapper extends AbstractDataMapper
             $object->getSum(),
             $object->getType()->getId(),
             $object->getLocation(),
-            $object->getOccuredAt(),
+            $object->getOccurredAt(),
         ];
         $result = $this->dbh->query($query, $values);
         echo $object->setId($this->dbh->getLastInsertedId());
@@ -108,7 +136,7 @@ class ExpensesMapper extends AbstractDataMapper
             $object->getSum(),
             $object->getType()->getId(),
             $object->getLocation(),
-            $object->getOccuredAt()
+            $object->getOccurredAt()
         ];
         $this->dbh->query($query, $values);
     }

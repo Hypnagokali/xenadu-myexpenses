@@ -4,11 +4,14 @@ namespace Controller;
 
 use Auth\Auth;
 use DateTime;
+use DateTimeImmutable;
 use Db\Mapper\ExpensesMapper;
 use Db\Mapper\TypeMapper;
 use Http\Redirect;
 use Model\Expenses;
+use Model\SpecialTypes\ExpensesStrings;
 use Validation\ExpensesValidator;
+use View\View;
 
 class MyExpensesController
 {
@@ -23,6 +26,34 @@ class MyExpensesController
             self::$instance = new MyExpensesController();
         }
         return self::$instance;
+    }
+
+
+    public function displayExpenses()
+    {
+        if (!Auth::auth()) {
+            $_SESSION['flash']['login'] = 'Erst einloggen, dann weiter';
+            Redirect::to('/login');
+        }
+
+        return View::display('my_expenses');
+    }
+
+    public function myExpensesData()
+    {
+        $currentDateTime = new DateTimeImmutable('first day of this month');
+        $nexMonth = new DateTimeImmutable('first day of +1 month');
+        $user = Auth::getUser();
+        $userId = (int) $user->getId();
+
+        if (!$user) {
+            $_SESSION['flash']['login'] = 'Bitte einloggen';
+            Redirect::to('/login');
+        }
+
+        $expensesMapper = new ExpensesMapper();
+        $expensesList = $expensesMapper->findAllByDateIntervall($currentDateTime, $nexMonth, $userId);
+        return $expensesList;
     }
 
     public function addExpensesPost()
@@ -92,12 +123,13 @@ class MyExpensesController
         $expenses->setUserId($userId);
         $expenses->setSum($sum_cents);
         $expenses->setLocation($location);
-        $expenses->setOccuredAt($date);
+        $expenses->setOccurredAt($date);
         $expenses->setType($type);
 
         $expensesMapper->save($expenses);
-        echo "Gespeichert \u{1F642}";
-        exit();
+        
+        $_SESSION['flash']['success'] = 'Gespeichert &#x1F642;';
+        Redirect::to('/expenses');
     }
 
     public function getAllExpenses()
@@ -124,7 +156,7 @@ class MyExpensesController
         $exp->setUserId($uid);
         $exp->setSum(4899);
         $exp->setLocation('Amazon');
-        $exp->setOccuredAt($nowString);
+        $exp->setOccurredAt($nowString);
         $exp->setType($type);
 
         $myExMapper = new ExpensesMapper();

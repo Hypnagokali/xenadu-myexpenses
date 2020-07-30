@@ -10,6 +10,7 @@
 error_reporting(-1);
 mb_internal_encoding('UTF-8');
 mb_http_output('UTF-8');
+setlocale(LC_TIME, 'de_DE');
 
 use Http\Route;
 
@@ -18,8 +19,10 @@ use Http\Route;
 */
 require_once 'src/autoload.php';
 require_once 'src/functions.php';
-session_start();
 
+if (!session_id()) {
+    session_start();
+}
 /*
     add routes
 */
@@ -47,6 +50,7 @@ $route->post('/register', 'UserController@hashMyStringPost');
 $route->post('/verify', 'UserController@verifyPost');
 
 $route->get('/expenses', 'Controller@expenses');
+$route->get('/myexpenses', 'MyExpensesController@displayExpenses');
 
 /* 
  let's go! :)
